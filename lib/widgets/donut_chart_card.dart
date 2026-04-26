@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../data/dummy_data.dart';
 import 'ui_helpers.dart';
@@ -37,10 +38,14 @@ class _DonutChartCardState extends State<DonutChartCard> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 160,
-                height: 160,
-                child: _donutChart(),
+              Semantics(
+                label: 'Budget allocation donut chart, total \$8.0M',
+                container: true,
+                child: SizedBox(
+                  width: 160,
+                  height: 160,
+                  child: _donutChart(),
+                ),
               ),
               const SizedBox(width: 18),
               Expanded(child: _legend()),
@@ -65,12 +70,18 @@ class _DonutChartCardState extends State<DonutChartCard> {
                 if (!event.isInterestedForInteractions ||
                     response == null ||
                     response.touchedSection == null) {
-                  setState(() => _touchedIndex = -1);
+                  if (_touchedIndex != -1) {
+                    setState(() => _touchedIndex = -1);
+                  }
                   return;
                 }
                 final idx = response.touchedSection!.touchedSectionIndex;
-                setState(() => _touchedIndex = idx);
+                if (idx != _touchedIndex) {
+                  HapticFeedback.selectionClick();
+                  setState(() => _touchedIndex = idx);
+                }
                 if (event is FlTapUpEvent) {
+                  HapticFeedback.lightImpact();
                   widget.onSegmentTapped(widget.data[idx]);
                 }
               },
@@ -88,36 +99,32 @@ class _DonutChartCardState extends State<DonutChartCard> {
             }).toList(),
           ),
         ),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          switchInCurve: Curves.easeOut,
-          switchOutCurve: Curves.easeIn,
-          child: sel == null
-              ? _centerLabel(
-                  key: const ValueKey('total'),
-                  top: '\$8.0M',
-                  bottom: 'Total',
-                  topColor: const Color(0xFF111827),
-                )
-              : _centerLabel(
-                  key: ValueKey(sel.label),
-                  top: '${sel.percentage.toInt()}%',
-                  bottom: sel.label,
-                  topColor: sel.color,
-                ),
-        ),
+        // Direct conditional build (no AnimatedSwitcher) to avoid the
+        // duplicate-key crash that fires during rapid hover events when an
+        // outgoing child still animates while an incoming child reuses the
+        // same ValueKey. The donut's own segment radius animation already
+        // provides enough feedback.
+        sel == null
+            ? _centerLabel(
+                top: '\$8.0M',
+                bottom: 'Total',
+                topColor: const Color(0xFF111827),
+              )
+            : _centerLabel(
+                top: '${sel.percentage.toInt()}%',
+                bottom: sel.label,
+                topColor: sel.color,
+              ),
       ],
     );
   }
 
   Widget _centerLabel({
-    required Key key,
     required String top,
     required String bottom,
     required Color topColor,
   }) {
     return Column(
-      key: key,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
@@ -149,12 +156,18 @@ class _DonutChartCardState extends State<DonutChartCard> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: widget.data.asMap().entries.map((e) {
         final isActive = e.key == _touchedIndex;
-        return GestureDetector(
-          onTap: () {
-            setState(() => _touchedIndex = isActive ? -1 : e.key);
-            if (!isActive) widget.onSegmentTapped(e.value);
-          },
-          child: AnimatedContainer(
+        return Semantics(
+          button: true,
+          label:
+              '${e.value.label}, ${e.value.percentage.toInt()}% of budget, ${e.value.value}',
+          hint: 'Double tap to view details',
+          child: GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              setState(() => _touchedIndex = isActive ? -1 : e.key);
+              if (!isActive) widget.onSegmentTapped(e.value);
+            },
+            child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             margin: const EdgeInsets.only(bottom: 9),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
@@ -175,32 +188,37 @@ class _DonutChartCardState extends State<DonutChartCard> {
                   ),
                 ),
                 const SizedBox(width: 9),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      e.value.label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isActive
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: const Color(0xFF1E293B),
-                        height: 1.2,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        e.value.label,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isActive
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color: const Color(0xFF1E293B),
+                          height: 1.2,
+                        ),
                       ),
-                    ),
-                    Text(
-                      e.value.value,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFFADB5BD),
-                        height: 1.3,
+                      Text(
+                        e.value.value,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFFADB5BD),
+                          height: 1.3,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
+          ),
           ),
         );
       }).toList(),

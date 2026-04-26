@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../data/dummy_data.dart';
 import 'ui_helpers.dart';
@@ -31,9 +32,14 @@ class _BarChartCardState extends State<BarChartCard> {
             subtitle: 'Jan – Jun 2025  ·  values in \$K',
           ),
           const SizedBox(height: 22),
-          SizedBox(
-            height: 176,
-            child: _barChart(),
+          Semantics(
+            label: 'Monthly revenue bar chart, January to June 2025. '
+                'Tap a bar to see details for that month.',
+            container: true,
+            child: SizedBox(
+              height: 176,
+              child: _barChart(),
+            ),
           ),
           const SizedBox(height: 12),
           cardHint('Tap a bar to explore details'),
@@ -68,12 +74,18 @@ class _BarChartCardState extends State<BarChartCard> {
             if (!event.isInterestedForInteractions ||
                 response == null ||
                 response.spot == null) {
-              setState(() => _touchedIndex = -1);
+              if (_touchedIndex != -1) {
+                setState(() => _touchedIndex = -1);
+              }
               return;
             }
             final idx = response.spot!.touchedBarGroupIndex;
-            setState(() => _touchedIndex = idx);
+            if (idx != _touchedIndex) {
+              HapticFeedback.selectionClick();
+              setState(() => _touchedIndex = idx);
+            }
             if (event is FlTapUpEvent) {
+              HapticFeedback.lightImpact();
               widget.onBarTapped(widget.data[idx]);
             }
           },

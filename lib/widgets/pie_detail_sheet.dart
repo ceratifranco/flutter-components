@@ -29,14 +29,21 @@ class PieDetailSheet extends StatelessWidget {
               children: [
                 sheetChip(segment.label, segment.color),
                 const SizedBox(height: 16),
-                Text(
-                  segment.value,
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w800,
-                    color: kNavy,
-                    height: 1,
-                    letterSpacing: -1.5,
+                Semantics(
+                  header: true,
+                  label:
+                      '${segment.label} budget, ${segment.value}, ${segment.percentage.toInt()} percent of total',
+                  child: ExcludeSemantics(
+                    child: Text(
+                      segment.value,
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        color: kNavy,
+                        height: 1,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),

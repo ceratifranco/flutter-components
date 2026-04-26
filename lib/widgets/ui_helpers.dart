@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../data/dummy_data.dart';
 
 // ─── Card shell ─────────────────────────────────────────────────────────────
@@ -229,7 +230,10 @@ Widget sheetCta(BuildContext context, String label) {
   return SizedBox(
     width: double.infinity,
     child: FilledButton(
-      onPressed: () => Navigator.pop(context),
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        Navigator.pop(context);
+      },
       style: FilledButton.styleFrom(
         backgroundColor: kNavy,
         foregroundColor: Colors.white,

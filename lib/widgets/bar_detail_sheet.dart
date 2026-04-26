@@ -38,14 +38,21 @@ class BarDetailSheet extends StatelessWidget {
               children: [
                 sheetChip('${revenue.month} 2025', kBlue),
                 const SizedBox(height: 16),
-                Text(
-                  '\$${revenue.value.toInt()}K',
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w800,
-                    color: kNavy,
-                    height: 1,
-                    letterSpacing: -1.5,
+                Semantics(
+                  header: true,
+                  label:
+                      '${revenue.month} 2025 revenue, ${revenue.value.toInt()} thousand dollars',
+                  child: ExcludeSemantics(
+                    child: Text(
+                      '\$${revenue.value.toInt()}K',
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        color: kNavy,
+                        height: 1,
+                        letterSpacing: -1.5,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
