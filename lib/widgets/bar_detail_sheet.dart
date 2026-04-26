@@ -11,16 +11,20 @@ class BarDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.paddingOf(context).bottom;
     final isPositive = revenue.vsLastMonth >= 0;
-    final sign = isPositive ? '↑' : '↓';
-    final pctStr = '${revenue.vsLastMonth.abs().toStringAsFixed(1)}%';
+    final sign = isPositive ? '+' : '';
+    final pctStr = '$sign${revenue.vsLastMonth.toStringAsFixed(1)}%';
     final growthColor = isPositive ? kGreen : kRed;
-    final growthBg =
-        isPositive ? const Color(0xFFD1FAE5) : const Color(0xFFFEE2E2);
+    final growthBg = isPositive
+        ? const Color(0xFFECFDF5)
+        : const Color(0xFFFEF2F2);
+    final growthIcon = isPositive
+        ? Icons.trending_up_rounded
+        : Icons.trending_down_rounded;
 
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -33,60 +37,71 @@ class BarDetailSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 sheetChip('${revenue.month} 2025', kBlue),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 Text(
                   '\$${revenue.value.toInt()}K',
                   style: const TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 40,
+                    fontWeight: FontWeight.w800,
                     color: kNavy,
                     height: 1,
+                    letterSpacing: -1.5,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: growthBg,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
-                    '$sign $pctStr vs previous month',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: growthColor,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(growthIcon, size: 14, color: growthColor),
+                      const SizedBox(width: 5),
+                      Text(
+                        '$pctStr vs previous month',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: growthColor,
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
                 sheetDivider(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     sheetStat(
                       revenue.newClients.toString(),
                       'New Clients',
-                      const Color(0xFF111827),
+                      const Color(0xFF1E293B),
                     ),
                     sheetStat(
                       revenue.avgDeal,
                       'Avg. Deal',
-                      const Color(0xFF111827),
+                      const Color(0xFF1E293B),
                     ),
                     sheetStat(revenue.churnRate, 'Churn Rate', kAmber),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 sheetDivider(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 sheetSectionLabel('Revenue Sources'),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 ...revenue.sources.map(_sourceRow),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 sheetCta(context, 'View Full ${revenue.month} Report'),
-                SizedBox(height: bottomPad + 16),
+                SizedBox(height: bottomPad + 20),
               ],
             ),
           ),
@@ -96,8 +111,9 @@ class BarDetailSheet extends StatelessWidget {
   }
 
   Widget _sourceRow(RevenueSource src) {
+    final pct = (src.fraction * 100).toInt();
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         children: [
           Row(
@@ -113,25 +129,29 @@ class BarDetailSheet extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 9),
                   Text(
                     src.name,
                     style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF374151)),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF374151),
+                    ),
                   ),
                 ],
               ),
               Text(
-                '${(src.fraction * 100).toInt()}%',
+                '$pct%',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
                   color: src.color,
+                  letterSpacing: -0.2,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 8),
           sheetProgressBar(src.fraction, src.color),
         ],
       ),

@@ -30,13 +30,13 @@ class _BarChartCardState extends State<BarChartCard> {
             title: 'Monthly Revenue',
             subtitle: 'Jan – Jun 2025  ·  values in \$K',
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
           SizedBox(
-            height: 172,
+            height: 176,
             child: _barChart(),
           ),
           const SizedBox(height: 12),
-          cardHint('Tap a bar to see details'),
+          cardHint('Tap a bar to explore details'),
         ],
       ),
     );
@@ -50,15 +50,17 @@ class _BarChartCardState extends State<BarChartCard> {
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (_) => kNavy,
-            tooltipRoundedRadius: 8,
+            tooltipRoundedRadius: 10,
             tooltipPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            getTooltipItem: (group, groupIndex, rod, rodIndex) => BarTooltipItem(
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            getTooltipItem: (group, groupIndex, rod, rodIndex) =>
+                BarTooltipItem(
               '\$${widget.data[group.x].value.toInt()}K',
               const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontSize: 12,
+                letterSpacing: -0.2,
               ),
             ),
           ),
@@ -92,7 +94,7 @@ class _BarChartCardState extends State<BarChartCard> {
                     value.toInt().toString(),
                     style: const TextStyle(
                       fontSize: 10,
-                      color: Color(0xFFD1D5DB),
+                      color: Color(0xFFCBD5E1),
                     ),
                   ),
                 );
@@ -115,9 +117,9 @@ class _BarChartCardState extends State<BarChartCard> {
                     widget.data[i].month,
                     style: TextStyle(
                       fontSize: 11,
-                      color: isActive ? kBlue : const Color(0xFF9CA3AF),
+                      color: isActive ? kBlue : const Color(0xFFADB5BD),
                       fontWeight:
-                          isActive ? FontWeight.w600 : FontWeight.w400,
+                          isActive ? FontWeight.w700 : FontWeight.w400,
                     ),
                   ),
                 );
@@ -134,12 +136,12 @@ class _BarChartCardState extends State<BarChartCard> {
           drawVerticalLine: false,
           horizontalInterval: 50,
           getDrawingHorizontalLine: (_) => const FlLine(
-            color: Color(0xFFF3F4F6),
+            color: Color(0xFFF1F5F9),
             strokeWidth: 1,
           ),
         ),
         borderData: FlBorderData(show: false),
-        groupsSpace: 8,
+        groupsSpace: 6,
         barGroups: widget.data.asMap().entries.map((e) {
           final isActive = e.key == _touchedIndex;
           return BarChartGroupData(
@@ -147,10 +149,10 @@ class _BarChartCardState extends State<BarChartCard> {
             barRods: [
               BarChartRodData(
                 toY: e.value.value,
-                color: isActive ? kBlue : const Color(0xFFE0E8FB),
+                color: isActive ? kBlue : const Color(0xFFDDE6FB),
                 width: 22,
                 borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(5)),
+                    const BorderRadius.vertical(top: Radius.circular(6)),
               ),
             ],
           );

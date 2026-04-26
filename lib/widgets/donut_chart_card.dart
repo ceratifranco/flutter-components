@@ -33,21 +33,21 @@ class _DonutChartCardState extends State<DonutChartCard> {
             title: 'Budget Allocation',
             subtitle: 'FY 2025  ·  Total \$8.0M',
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: 156,
-                height: 156,
+                width: 160,
+                height: 160,
                 child: _donutChart(),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 18),
               Expanded(child: _legend()),
             ],
           ),
-          const SizedBox(height: 16),
-          cardHint('Tap a segment to see details'),
+          const SizedBox(height: 18),
+          cardHint('Tap a segment to explore details'),
         ],
       ),
     );
@@ -75,21 +75,23 @@ class _DonutChartCardState extends State<DonutChartCard> {
                 }
               },
             ),
-            centerSpaceRadius: 44,
-            sectionsSpace: 2,
+            centerSpaceRadius: 46,
+            sectionsSpace: 2.5,
             sections: widget.data.asMap().entries.map((e) {
               final active = e.key == _touchedIndex;
               return PieChartSectionData(
                 color: e.value.color,
                 value: e.value.percentage,
-                radius: active ? 60 : 52,
+                radius: active ? 62 : 54,
                 showTitle: false,
               );
             }).toList(),
           ),
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 200),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
           child: sel == null
               ? _centerLabel(
                   key: const ValueKey('total'),
@@ -121,16 +123,21 @@ class _DonutChartCardState extends State<DonutChartCard> {
         Text(
           top,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: FontWeight.w700,
             color: topColor,
+            letterSpacing: -0.5,
             height: 1,
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 4),
         Text(
           bottom,
-          style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF)),
+          style: const TextStyle(
+            fontSize: 11,
+            color: Color(0xFFADB5BD),
+            letterSpacing: 0.1,
+          ),
         ),
       ],
     );
@@ -142,29 +149,33 @@ class _DonutChartCardState extends State<DonutChartCard> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: widget.data.asMap().entries.map((e) {
         final isActive = e.key == _touchedIndex;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-          decoration: BoxDecoration(
-            color: isActive
-                ? e.value.color.withValues(alpha: 0.08)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: e.value.color,
-                  shape: BoxShape.circle,
+        return GestureDetector(
+          onTap: () {
+            setState(() => _touchedIndex = isActive ? -1 : e.key);
+            if (!isActive) widget.onSegmentTapped(e.value);
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            margin: const EdgeInsets.only(bottom: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? e.value.color.withValues(alpha: 0.08)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: e.value.color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
+                const SizedBox(width: 9),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -172,22 +183,24 @@ class _DonutChartCardState extends State<DonutChartCard> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: isActive
-                            ? FontWeight.w600
+                            ? FontWeight.w700
                             : FontWeight.w500,
-                        color: const Color(0xFF111827),
+                        color: const Color(0xFF1E293B),
+                        height: 1.2,
                       ),
                     ),
                     Text(
-                      '${e.value.percentage.toInt()}%  ·  ${e.value.value}',
+                      e.value.value,
                       style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF9CA3AF),
+                        fontSize: 11,
+                        color: Color(0xFFADB5BD),
+                        height: 1.3,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }).toList(),

@@ -15,7 +15,7 @@ class PieDetailSheet extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -28,25 +28,29 @@ class PieDetailSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 sheetChip(segment.label, segment.color),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 Text(
                   segment.value,
                   style: const TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 40,
+                    fontWeight: FontWeight.w800,
                     color: kNavy,
                     height: 1,
+                    letterSpacing: -1.5,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  '${segment.percentage.toInt()}% of total FY 2025 budget',
+                  'Allocated — FY 2025  ·  ${segment.percentage.toInt()}% of total budget',
                   style: const TextStyle(
-                      fontSize: 13, color: Color(0xFF9CA3AF)),
+                    fontSize: 13,
+                    color: Color(0xFFADB5BD),
+                    letterSpacing: 0.1,
+                  ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
                 sheetDivider(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     sheetStat(
@@ -57,37 +61,39 @@ class PieDetailSheet extends StatelessWidget {
                     sheetStat(
                       segment.ytdSpent,
                       'YTD Spent',
-                      const Color(0xFF111827),
+                      const Color(0xFF1E293B),
                     ),
                     sheetStat(segment.remaining, 'Remaining', kAmber),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 sheetDivider(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     sheetSectionLabel('Budget Utilization'),
                     Text(
                       '${(segment.utilization * 100).toInt()}%',
-                      style: const TextStyle(
-                        fontSize: 13,
+                      style: TextStyle(
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: kBlue,
+                        color: segment.color,
+                        letterSpacing: -0.2,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 14),
                 sheetProgressBar(segment.utilization, segment.color),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 sheetSectionLabel('Monthly Breakdown'),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 _miniChart(),
-                const SizedBox(height: 20),
-                sheetCta(context, 'View Full Report'),
-                SizedBox(height: bottomPad + 16),
+                const SizedBox(height: 24),
+                sheetCta(context, 'View Full ${segment.label} Report'),
+                SizedBox(height: bottomPad + 20),
               ],
             ),
           ),
@@ -97,13 +103,12 @@ class PieDetailSheet extends StatelessWidget {
   }
 
   Widget _miniChart() {
-    const chartH = 56.0;
+    const chartH = 60.0;
     const months = ['J', 'F', 'M', 'A', 'M', 'J'];
-    final maxVal =
-        segment.monthlyBreakdown.reduce((a, b) => a > b ? a : b);
+    final maxVal = segment.monthlyBreakdown.reduce((a, b) => a > b ? a : b);
 
     return SizedBox(
-      height: chartH + 22,
+      height: chartH + 24,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(segment.monthlyBreakdown.length, (i) {
@@ -111,25 +116,34 @@ class PieDetailSheet extends StatelessWidget {
           final isHighest = segment.monthlyBreakdown[i] == maxVal;
           return Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     height: barH,
                     decoration: BoxDecoration(
                       color: isHighest
                           ? segment.color
-                          : segment.color.withValues(alpha: 0.18),
+                          : segment.color.withValues(alpha: 0.15),
                       borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(4)),
+                        top: Radius.circular(5),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 7),
                   Text(
                     months[i],
-                    style: const TextStyle(
-                        fontSize: 10, color: Color(0xFF9CA3AF)),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: isHighest
+                          ? FontWeight.w700
+                          : FontWeight.w400,
+                      color: isHighest
+                          ? segment.color
+                          : const Color(0xFFCBD5E1),
+                    ),
                   ),
                 ],
               ),

@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        backgroundColor: const Color(0xFFF0F3F9),
         body: SafeArea(
           bottom: false,
           child: Column(
@@ -46,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         data: budgetData,
                         onSegmentTapped: _showPieDetail,
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
                       BarChartCard(
                         data: revenueData,
                         onBarTapped: _showBarDetail,
@@ -65,8 +65,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _header() {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1B2B4B).withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -76,18 +85,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 'Analytics',
                 style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
                   color: kNavy,
-                  letterSpacing: -0.5,
+                  letterSpacing: -0.8,
+                  height: 1.1,
                 ),
               ),
-              SizedBox(height: 2),
+              SizedBox(height: 3),
               Text(
                 'Q2 2025  —  Financial Overview',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF9CA3AF),
+                  color: Color(0xFFADB5BD),
+                  letterSpacing: 0.1,
                 ),
               ),
             ],
@@ -100,11 +111,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _avatar() {
     return Container(
-      width: 36,
-      height: 36,
+      width: 38,
+      height: 38,
       decoration: BoxDecoration(
         color: kNavy,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(19),
       ),
       child: const Center(
         child: Text(
@@ -112,8 +123,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.3,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
           ),
         ),
       ),
@@ -124,11 +135,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFF3F4F6), width: 1)),
+        border: Border(top: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
       ),
       child: SafeArea(
         child: SizedBox(
-          height: 56,
+          height: 58,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: _navItems.asMap().entries.map((e) {
@@ -137,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: () => setState(() => _navIndex = e.key),
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
-                  width: 96,
+                  width: 100,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -146,11 +157,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: isActive
-                              ? FontWeight.w600
+                              ? FontWeight.w700
                               : FontWeight.w400,
                           color: isActive
                               ? kBlue
-                              : const Color(0xFF9CA3AF),
+                              : const Color(0xFFADB5BD),
+                          letterSpacing: isActive ? -0.1 : 0,
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -158,10 +170,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         duration: const Duration(milliseconds: 200),
                         curve: Curves.easeOut,
                         width: isActive ? 20 : 0,
-                        height: 2,
+                        height: 2.5,
                         decoration: BoxDecoration(
                           color: kBlue,
-                          borderRadius: BorderRadius.circular(1),
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ],
