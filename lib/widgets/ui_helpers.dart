@@ -65,12 +65,15 @@ Widget cardHint(String text) {
         color: Color(0xFFCBD5E1),
       ),
       const SizedBox(width: 5),
-      Text(
-        text,
-        style: const TextStyle(
-          fontSize: 11,
-          color: Color(0xFFCBD5E1),
-          letterSpacing: 0.1,
+      Flexible(
+        child: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Color(0xFFCBD5E1),
+            letterSpacing: 0.1,
+          ),
         ),
       ),
     ],
